@@ -45,7 +45,19 @@
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form> {% endcomment %}
-                    <a href="{% url "cart:cart_summary"%}" class="">Cart (<span>1</span>)</a>
+                    <a href="{% url "cart:cart_summary"%}" class="">Cart ( 
+                        
+                        {% with total_qty=cart|length %}
+                        <span id="cart_qty">
+                            {%if total_qty > 0%}
+                                {{total_qty}}
+                            {%else%}
+                                0
+                            {% endif%}
+                            </span>
+                        {% endwith %}
+                        
+                     )</a>
                 </div>
             </div>
         </nav>

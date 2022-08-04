@@ -8,50 +8,80 @@
     <main class="pt-5">
         <div class="row g-3">
             <div class="col-md-5 col-lg-5 order-md-first bg-light">
-                <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image" src="{{ product.image.url }}">
+                <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image"
+                    src="{{ product.image.url }}">
             </div>
             <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
                 <h1 class="mb-0 h4">{{ product.title }}</h1>
                 <div class="row p-3">
-                    <div class="col-6 text-end"><span class="h4 fw-bold">£{{ product.price }}</span></div>
+                    <div class="col-6 text-end"><span class="h4 fw-bold">${{ product.price }}</span></div>
                 </div>
-                <div class="col">
+                <div>
+                    <input id='qty'type="hidden" name="qty" value="1">
+                </div>
+                <div class="col" id='size_select'>
                     <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions">
-                    <label class="form-check-label" for="flexRadioDefault1">XS</label>
+                        <input value="XS" class="form-check-input" type="radio" name="inlineRadioOptions">
+                        <label class="form-check-label" for="flexRadioDefault1">XS</label>
                     </div>
                     <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions">
-                    <label class="form-check-label" for="flexRadioDefault1">S</label>
+                        <input value="S" class="form-check-input" type="radio" name="inlineRadioOptions">
+                        <label class="form-check-label" for="flexRadioDefault1">S</label>
                     </div>
                     <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions">
-                    <label class="form-check-label" for="flexRadioDefault1">M</label>
+                        <input value="M" class="form-check-input" type="radio" name="inlineRadioOptions">
+                        <label class="form-check-label" for="flexRadioDefault1">M</label>
                     </div>
                     <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions">
-                    <label class="form-check-label" for="flexRadioDefault1">L</label>
+                        <input value="L" class="form-check-input" type="radio" name="inlineRadioOptions">
+                        <label class="form-check-label" for="flexRadioDefault1">L</label>
                     </div>
                     <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions">
-                    <label class="form-check-label" for="flexRadioDefault1">XL</label>
+                        <input value="XL" class="form-check-input" type="radio" name="inlineRadioOptions">
+                        <label class="form-check-label" for="flexRadioDefault1">XL</label>
                     </div>
                     <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions">
-                    <label class="form-check-label" for="flexRadioDefault1">2XL</label>
+                        <input value="2XL" class="form-check-input" type="radio" name="inlineRadioOptions">
+                        <label class="form-check-label" for="flexRadioDefault1">2XL</label>
                     </div>
                 </div>
                 {% comment %} <p><span class="lead">{{ product.author }}</span> (Author)</p> {% endcomment %}
-                <div>Description: {{ product.description}}</div>  
-                <div>Fit & Features: {{ product.fitfeatures}}</div>  
-                <div>Sizing: {{ product.demensions}}</div>  
-                </div>
-                <div class="col-6 text-end">
-                    <button type="button" class="btn btn-secondary btn-sm">Add to Cart</button>
-                </div>
+                <div>Description: {{ product.description}}</div>
+                <div>Fit & Features: {{ product.fitfeatures}}</div>
+                <div>Sizing: {{ product.demensions}}</div>
+            </div>
+            <div class="col-6 text-end">
+                <button type="button" id="add-button" value="{{product.id}}" class="btn btn-secondary btn-sm">Add to Cart</button>
             </div>
         </div>
-    </main>
+</div>
+</main>
 
 </div>
+
+<script>
+    $(document).on('click','#add-button', function (e){
+        e.preventDefault();
+        console.log($('#size_select input:checked').val())
+        console.log($('#qty').val())
+        $.ajax({
+            type: 'POST',
+            url: '{% url "cart:cart_add"%}',
+            data: {
+                productid: $('#add-button').val(),
+                productsize: $('#size_select input:checked').val(),
+                productqty: $('#qty').val(),
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: 'post',
+            },
+            success: function (json){
+                document.getElementById("cart_qty").innerHTML = json.qty
+                console.log(json)
+            },
+            error: function (xhr, errmsg, err){
+
+            },
+        });
+    })
+</script>
 {% endblock %}
